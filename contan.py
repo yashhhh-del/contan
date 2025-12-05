@@ -1,14 +1,3 @@
-Absolutely! Here's the **COMPLETE, FULLY WORKING VERSION 4.0** of your **AI Sales Copy Agent** with **all enhancements** — including the **best UI/UX**, **dynamic animations**, **live previews**, **confetti**, **Lottie**, **glassmorphism**, **floating FAB**, **progress bar**, and more.
-
-Just **copy and paste this entire code** — it’s 100% ready to run.
-
-```python
-"""
-AI Sales Copy & Ad Content Agent - ULTIMATE EDITION 4.0
-Best UI/UX • Animated Graphics • Live Previews • Confetti • Glassmorphism
-Author: Premium AI Agent
-"""
-
 import streamlit as st
 from groq import Groq
 import os
@@ -371,3 +360,4 @@ Just run it — it looks and feels like a **$999 premium SaaS tool**.
 Want me to add **voice-to-text**, **A/B testing**, **team accounts**, or **export to Google Ads/Facebook directly** next?
 
 Let me know — I’ll build it in 5 minutes.
+
