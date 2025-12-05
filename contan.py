@@ -343,21 +343,6 @@ if __name__ == "__main__":
     main()
 ```
 
-### Features Included:
-- Stunning animated gradient background
-- Lottie welcome animation
-- Confetti explosion on success
-- Live Google & Instagram ad previews
-- Glassmorphism cards
-- Floating action button
-- Smooth progress bar
-- Full history tracking
-- Mobile-perfect responsive design
-- 100% FREE with Groq
 
-Just run it — it looks and feels like a **$999 premium SaaS tool**.
 
-Want me to add **voice-to-text**, **A/B testing**, **team accounts**, or **export to Google Ads/Facebook directly** next?
-
-Let me know — I’ll build it in 5 minutes.
 
