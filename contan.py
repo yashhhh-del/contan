@@ -1607,25 +1607,89 @@ def display_content_results(results, platform_type):
     
     # Display main content in clean cards with copy buttons
     
-    # 1. HEADLINE - Premium Highlighted with Gradient
+    # Extract focus/tagline from results
+    focus_statement = ""
+    tagline = ""
+    elevator_pitch = ""
+    usps = []
+    
+    if isinstance(results, dict):
+        for section_name, section_content in results.items():
+            if isinstance(section_content, dict):
+                for key, value in section_content.items():
+                    key_lower = key.lower()
+                    if 'tagline' in key_lower:
+                        if isinstance(value, list) and len(value) > 0:
+                            tagline = value[0]
+                        elif isinstance(value, str):
+                            tagline = value
+                    elif 'elevator' in key_lower or 'pitch' in key_lower:
+                        if isinstance(value, str):
+                            elevator_pitch = value
+                    elif 'usp' in key_lower or 'unique' in key_lower or 'selling' in key_lower:
+                        if isinstance(value, list):
+                            usps.extend(value[:3])
+                    elif 'value_prop' in key_lower:
+                        if isinstance(value, list):
+                            for item in value[:2]:
+                                if isinstance(item, str):
+                                    usps.append(item)
+                                elif isinstance(item, dict) and 'title' in item:
+                                    usps.append(item['title'])
+    
+    # Create focus statement from available data
+    if elevator_pitch:
+        focus_statement = elevator_pitch
+    elif tagline:
+        focus_statement = tagline
+    elif usps:
+        focus_statement = " • ".join(usps[:3])
+    
+    # 1. HEADLINE - Premium Highlighted with Gradient and Focus Statement
     if headline:
         st.markdown(f"""
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); border-radius: 16px; padding: 2rem; margin: 1rem 0; box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4); position: relative; overflow: hidden;">
-            <div style="position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-            <div style="position: absolute; bottom: -30px; left: -30px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
-            <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem; font-weight: 600; margin: 0 0 0.8rem 0; text-transform: uppercase; letter-spacing: 1px;">
-                ✨ Premium Headline
-            </p>
-            <p style="color: white; font-size: 1.6rem; font-weight: 800; margin: 0; line-height: 1.4; text-shadow: 2px 2px 10px rgba(0,0,0,0.2); font-family: 'Poppins', sans-serif;">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); border-radius: 20px; padding: 2.5rem; margin: 1rem 0; box-shadow: 0 15px 50px rgba(102, 126, 234, 0.5); position: relative; overflow: hidden;">
+            
+            <!-- Decorative elements -->
+            <div style="position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+            <div style="position: absolute; bottom: -40px; left: -40px; width: 100px; height: 100px; background: rgba(255,255,255,0.08); border-radius: 50%;"></div>
+            <div style="position: absolute; top: 50%; right: 10%; width: 60px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+            
+            <!-- Premium Badge -->
+            <div style="display: inline-block; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 0.4rem 1rem; border-radius: 50px; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.3);">
+                <span style="color: white; font-size: 0.8rem; font-weight: 600; letter-spacing: 1px;">✨ PREMIUM HEADLINE</span>
+            </div>
+            
+            <!-- Main Headline -->
+            <h2 style="color: white; font-size: 1.8rem; font-weight: 800; margin: 0.5rem 0 1rem 0; line-height: 1.3; text-shadow: 2px 4px 15px rgba(0,0,0,0.3); font-family: 'Poppins', sans-serif; position: relative; z-index: 1;">
                 {headline}
-            </p>
+            </h2>
+            
+            <!-- Focus Statement / Tagline -->
+            <div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(5px); border-radius: 12px; padding: 1rem 1.2rem; margin-top: 1rem; border: 1px solid rgba(255,255,255,0.2);">
+                <p style="color: rgba(255,255,255,0.9); font-size: 0.85rem; font-weight: 500; margin: 0 0 0.5rem 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                    🎯 Focus Statement:
+                </p>
+                <p style="color: white; font-size: 1rem; font-weight: 500; margin: 0; line-height: 1.6; font-style: italic;">
+                    "{focus_statement if focus_statement else 'Bridging potential with industry needs • Real-world skills • Career launchpad • Future-ready talent'}"
+                </p>
+            </div>
+            
         </div>
         """, unsafe_allow_html=True)
         
-        # Copy button for headline
-        if st.button("📋 Copy Headline", key="copy_headline_btn"):
-            st.code(headline, language=None)
-            st.success("✅ Headline ready to copy!")
+        # Copy buttons row
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col1:
+            if st.button("📋 Copy Headline", key="copy_headline_btn", use_container_width=True):
+                st.code(headline, language=None)
+        with col2:
+            if st.button("📋 Copy Focus", key="copy_focus_btn", use_container_width=True):
+                st.code(focus_statement if focus_statement else "Bridging potential with industry needs", language=None)
+        with col3:
+            if st.button("📋 Copy Both", key="copy_both_btn", use_container_width=True):
+                combined = f"{headline}\n\n{focus_statement}" if focus_statement else headline
+                st.code(combined, language=None)
     
     # 2. DESCRIPTION
     if description:
