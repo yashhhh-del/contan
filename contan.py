@@ -1607,43 +1607,80 @@ def display_content_results(results, platform_type):
     
     # Display main content in clean cards with copy buttons
     
-    # Extract focus/tagline from results
+    # Extract focus/tagline from results FIRST
     focus_statement = ""
     tagline = ""
     elevator_pitch = ""
     usps = []
+    value_props = []
     
     if isinstance(results, dict):
         for section_name, section_content in results.items():
             if isinstance(section_content, dict):
                 for key, value in section_content.items():
                     key_lower = key.lower()
+                    
+                    # Get taglines
                     if 'tagline' in key_lower:
                         if isinstance(value, list) and len(value) > 0:
                             tagline = value[0]
                         elif isinstance(value, str):
                             tagline = value
+                    
+                    # Get elevator pitch
                     elif 'elevator' in key_lower or 'pitch' in key_lower:
                         if isinstance(value, str):
                             elevator_pitch = value
-                    elif 'usp' in key_lower or 'unique' in key_lower or 'selling' in key_lower:
+                        elif isinstance(value, list) and len(value) > 0:
+                            elevator_pitch = value[0]
+                    
+                    # Get USPs
+                    elif 'usp' in key_lower or 'unique_selling' in key_lower:
                         if isinstance(value, list):
                             usps.extend(value[:3])
-                    elif 'value_prop' in key_lower:
+                        elif isinstance(value, str):
+                            usps.append(value)
+                    
+                    # Get value propositions
+                    elif 'value_prop' in key_lower or 'value_proposition' in key_lower:
                         if isinstance(value, list):
-                            for item in value[:2]:
+                            for item in value[:3]:
                                 if isinstance(item, str):
-                                    usps.append(item)
-                                elif isinstance(item, dict) and 'title' in item:
-                                    usps.append(item['title'])
+                                    value_props.append(item)
+                                elif isinstance(item, dict):
+                                    if 'title' in item:
+                                        value_props.append(item['title'])
+                                    elif 'description' in item:
+                                        value_props.append(item['description'][:50])
+                    
+                    # Get hero subheadline as fallback
+                    elif 'subheadline' in key_lower or 'hero_subheadline' in key_lower:
+                        if isinstance(value, str) and not elevator_pitch:
+                            elevator_pitch = value
+            
+            # Check section-level for general content
+            if section_name.lower() == 'general' and isinstance(section_content, dict):
+                for key, value in section_content.items():
+                    key_lower = key.lower()
+                    if 'tagline' in key_lower and isinstance(value, list) and len(value) > 0:
+                        tagline = value[0]
+                    elif 'elevator' in key_lower and isinstance(value, str):
+                        elevator_pitch = value
+                    elif 'unique' in key_lower and isinstance(value, list):
+                        usps.extend(value[:3])
     
-    # Create focus statement from available data
-    if elevator_pitch:
+    # Create focus statement from available data (priority order)
+    if elevator_pitch and len(elevator_pitch) > 20:
         focus_statement = elevator_pitch
+    elif usps and len(usps) >= 2:
+        focus_statement = " • ".join(usps[:3])
+    elif value_props and len(value_props) >= 2:
+        focus_statement = " • ".join(value_props[:3])
     elif tagline:
         focus_statement = tagline
-    elif usps:
-        focus_statement = " • ".join(usps[:3])
+    elif description:
+        # Use first sentence of description as fallback
+        focus_statement = description.split('.')[0] + "."
     
     # 1. HEADLINE - Premium Highlighted with Gradient and Focus Statement
     if headline:
@@ -1665,13 +1702,13 @@ def display_content_results(results, platform_type):
                 {headline}
             </h2>
             
-            <!-- Focus Statement / Tagline -->
+            <!-- Focus Statement / Tagline - DYNAMIC -->
             <div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(5px); border-radius: 12px; padding: 1rem 1.2rem; margin-top: 1rem; border: 1px solid rgba(255,255,255,0.2);">
                 <p style="color: rgba(255,255,255,0.9); font-size: 0.85rem; font-weight: 500; margin: 0 0 0.5rem 0; text-transform: uppercase; letter-spacing: 0.5px;">
                     🎯 Focus Statement:
                 </p>
                 <p style="color: white; font-size: 1rem; font-weight: 500; margin: 0; line-height: 1.6; font-style: italic;">
-                    "{focus_statement if focus_statement else 'Bridging potential with industry needs • Real-world skills • Career launchpad • Future-ready talent'}"
+                    "{focus_statement}"
                 </p>
             </div>
             
@@ -1685,10 +1722,10 @@ def display_content_results(results, platform_type):
                 st.code(headline, language=None)
         with col2:
             if st.button("📋 Copy Focus", key="copy_focus_btn", use_container_width=True):
-                st.code(focus_statement if focus_statement else "Bridging potential with industry needs", language=None)
+                st.code(focus_statement, language=None)
         with col3:
             if st.button("📋 Copy Both", key="copy_both_btn", use_container_width=True):
-                combined = f"{headline}\n\n{focus_statement}" if focus_statement else headline
+                combined = f"{headline}\n\n{focus_statement}"
                 st.code(combined, language=None)
     
     # 2. DESCRIPTION
