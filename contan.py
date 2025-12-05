@@ -1607,24 +1607,25 @@ def display_content_results(results, platform_type):
     
     # Display main content in clean cards with copy buttons
     
-    # 1. HEADLINE - Highlighted
+    # 1. HEADLINE - Premium Highlighted with Gradient
     if headline:
-        col_content, col_copy = st.columns([10, 1])
-        with col_content:
-            st.markdown(f"""
-            <div style="background: white; border-left: 4px solid #667eea; border-radius: 8px; padding: 1.2rem 1.5rem; margin: 0.5rem 0; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
-                <p style="color: #333; font-size: 0.85rem; font-weight: 600; margin: 0 0 0.5rem 0; text-transform: uppercase; letter-spacing: 0.5px;">
-                    <span style="margin-right: 0.5rem;">📰</span> Headline:
-                </p>
-                <p style="color: #667eea; font-size: 1.3rem; font-weight: 700; margin: 0; line-height: 1.4;">
-                    {headline}
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-        with col_copy:
-            st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
-            if st.button("📋", key="copy_headline", help="Copy Headline"):
-                st.toast(f"Copied: {headline}")
+        st.markdown(f"""
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); border-radius: 16px; padding: 2rem; margin: 1rem 0; box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4); position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+            <div style="position: absolute; bottom: -30px; left: -30px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+            <p style="color: rgba(255,255,255,0.9); font-size: 0.9rem; font-weight: 600; margin: 0 0 0.8rem 0; text-transform: uppercase; letter-spacing: 1px;">
+                ✨ Premium Headline
+            </p>
+            <p style="color: white; font-size: 1.6rem; font-weight: 800; margin: 0; line-height: 1.4; text-shadow: 2px 2px 10px rgba(0,0,0,0.2); font-family: 'Poppins', sans-serif;">
+                {headline}
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Copy button for headline
+        if st.button("📋 Copy Headline", key="copy_headline_btn"):
+            st.code(headline, language=None)
+            st.success("✅ Headline ready to copy!")
     
     # 2. DESCRIPTION
     if description:
@@ -1645,24 +1646,44 @@ def display_content_results(results, platform_type):
             if st.button("📋", key="copy_desc", help="Copy Description"):
                 st.toast(f"Copied: {description}")
     
-    # 3. CTA
-    if cta:
-        col_content, col_copy = st.columns([10, 1])
-        with col_content:
-            st.markdown(f"""
-            <div style="background: white; border-left: 4px solid #667eea; border-radius: 8px; padding: 1.2rem 1.5rem; margin: 0.5rem 0; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
-                <p style="color: #333; font-size: 0.85rem; font-weight: 600; margin: 0 0 0.5rem 0; text-transform: uppercase; letter-spacing: 0.5px;">
-                    <span style="margin-right: 0.5rem;">🎯</span> CTA:
-                </p>
-                <p style="color: #11998e; font-size: 1.1rem; font-weight: 600; margin: 0;">
-                    {cta} →
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-        with col_copy:
-            st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
-            if st.button("📋", key="copy_cta", help="Copy CTA"):
-                st.toast(f"Copied: {cta}")
+    # 3. CTA - Show 2-3 options
+    cta_options = []
+    if isinstance(results, dict):
+        for section_name, section_content in results.items():
+            if isinstance(section_content, dict):
+                for key, value in section_content.items():
+                    key_lower = key.lower()
+                    if 'cta' in key_lower or 'call' in key_lower or 'button' in key_lower:
+                        if isinstance(value, list):
+                            cta_options.extend(value[:3])  # Get up to 3 CTAs
+                        elif isinstance(value, str):
+                            cta_options.append(value)
+    
+    # Remove duplicates and limit to 3
+    cta_options = list(dict.fromkeys(cta_options))[:3]
+    
+    if cta_options:
+        st.markdown(f"""
+        <div style="background: white; border-left: 4px solid #11998e; border-radius: 8px; padding: 1.2rem 1.5rem; margin: 0.5rem 0; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+            <p style="color: #333; font-size: 0.85rem; font-weight: 600; margin: 0 0 1rem 0; text-transform: uppercase; letter-spacing: 0.5px;">
+                <span style="margin-right: 0.5rem;">🎯</span> Call-to-Action Options:
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        for i, cta_item in enumerate(cta_options, 1):
+            col_cta, col_copy = st.columns([10, 1])
+            with col_cta:
+                st.markdown(f"""
+                <div style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 10px; padding: 0.8rem 1.2rem; margin: 0.4rem 0; display: inline-block; box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);">
+                    <span style="color: white; font-size: 1.05rem; font-weight: 600;">
+                        {i}. {cta_item} →
+                    </span>
+                </div>
+                """, unsafe_allow_html=True)
+            with col_copy:
+                if st.button("📋", key=f"copy_cta_{i}", help=f"Copy CTA {i}"):
+                    st.toast(f"Copied: {cta_item}")
     
     # 4. HASHTAGS - Comma separated
     if hashtags:
