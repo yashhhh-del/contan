@@ -1684,36 +1684,20 @@ def display_content_results(results, platform_type):
     
     # 1. HEADLINE - Premium Highlighted with Gradient and Focus Statement
     if headline:
-        st.markdown(f"""
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); border-radius: 20px; padding: 2.5rem; margin: 1rem 0; box-shadow: 0 15px 50px rgba(102, 126, 234, 0.5); position: relative; overflow: hidden;">
-            
-            <!-- Decorative elements -->
+        premium_html = f'''<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); border-radius: 20px; padding: 2.5rem; margin: 1rem 0; box-shadow: 0 15px 50px rgba(102, 126, 234, 0.5); position: relative; overflow: hidden;">
             <div style="position: absolute; top: -30px; right: -30px; width: 120px; height: 120px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
             <div style="position: absolute; bottom: -40px; left: -40px; width: 100px; height: 100px; background: rgba(255,255,255,0.08); border-radius: 50%;"></div>
-            <div style="position: absolute; top: 50%; right: 10%; width: 60px; height: 60px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
-            
-            <!-- Premium Badge -->
-            <div style="display: inline-block; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 0.4rem 1rem; border-radius: 50px; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.3);">
+            <div style="display: inline-block; background: rgba(255,255,255,0.2); padding: 0.4rem 1rem; border-radius: 50px; margin-bottom: 1rem; border: 1px solid rgba(255,255,255,0.3);">
                 <span style="color: white; font-size: 0.8rem; font-weight: 600; letter-spacing: 1px;">✨ PREMIUM HEADLINE</span>
             </div>
-            
-            <!-- Main Headline -->
-            <h2 style="color: white; font-size: 1.8rem; font-weight: 800; margin: 0.5rem 0 1rem 0; line-height: 1.3; text-shadow: 2px 4px 15px rgba(0,0,0,0.3); font-family: 'Poppins', sans-serif; position: relative; z-index: 1;">
-                {headline}
-            </h2>
-            
-            <!-- Focus Statement / Tagline - DYNAMIC -->
-            <div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(5px); border-radius: 12px; padding: 1rem 1.2rem; margin-top: 1rem; border: 1px solid rgba(255,255,255,0.2);">
-                <p style="color: rgba(255,255,255,0.9); font-size: 0.85rem; font-weight: 500; margin: 0 0 0.5rem 0; text-transform: uppercase; letter-spacing: 0.5px;">
-                    🎯 Focus Statement:
-                </p>
-                <p style="color: white; font-size: 1rem; font-weight: 500; margin: 0; line-height: 1.6; font-style: italic;">
-                    "{focus_statement}"
-                </p>
+            <h2 style="color: white; font-size: 1.8rem; font-weight: 800; margin: 0.5rem 0 1rem 0; line-height: 1.3; text-shadow: 2px 4px 15px rgba(0,0,0,0.3); font-family: Poppins, sans-serif;">{headline}</h2>
+            <div style="background: rgba(255,255,255,0.15); border-radius: 12px; padding: 1rem 1.2rem; margin-top: 1rem; border: 1px solid rgba(255,255,255,0.2);">
+                <p style="color: rgba(255,255,255,0.9); font-size: 0.85rem; font-weight: 500; margin: 0 0 0.5rem 0; text-transform: uppercase; letter-spacing: 0.5px;">🎯 Focus Statement:</p>
+                <p style="color: white; font-size: 1rem; font-weight: 500; margin: 0; line-height: 1.6; font-style: italic;">"{focus_statement}"</p>
             </div>
-            
-        </div>
-        """, unsafe_allow_html=True)
+        </div>'''
+        
+        st.markdown(premium_html, unsafe_allow_html=True)
         
         # Copy buttons row
         col1, col2, col3 = st.columns([1, 1, 1])
@@ -1732,20 +1716,15 @@ def display_content_results(results, platform_type):
     if description:
         col_content, col_copy = st.columns([10, 1])
         with col_content:
-            st.markdown(f"""
-            <div style="background: white; border-left: 4px solid #667eea; border-radius: 8px; padding: 1.2rem 1.5rem; margin: 0.5rem 0; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
-                <p style="color: #333; font-size: 0.85rem; font-weight: 600; margin: 0 0 0.5rem 0; text-transform: uppercase; letter-spacing: 0.5px;">
-                    <span style="margin-right: 0.5rem;">📝</span> Description:
-                </p>
-                <p style="color: #1a1a2e; font-size: 1.05rem; margin: 0; line-height: 1.6;">
-                    {description}
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
+            desc_html = f'''<div style="background: white; border-left: 4px solid #667eea; border-radius: 8px; padding: 1.2rem 1.5rem; margin: 0.5rem 0; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+                <p style="color: #333; font-size: 0.85rem; font-weight: 600; margin: 0 0 0.5rem 0; text-transform: uppercase; letter-spacing: 0.5px;">📝 Description:</p>
+                <p style="color: #1a1a2e; font-size: 1.05rem; margin: 0; line-height: 1.6;">{description}</p>
+            </div>'''
+            st.markdown(desc_html, unsafe_allow_html=True)
         with col_copy:
-            st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
             if st.button("📋", key="copy_desc", help="Copy Description"):
-                st.toast(f"Copied: {description}")
+                st.toast(f"Copied!")
     
     # 3. CTA - Show 2-3 options
     cta_options = []
@@ -1756,7 +1735,7 @@ def display_content_results(results, platform_type):
                     key_lower = key.lower()
                     if 'cta' in key_lower or 'call' in key_lower or 'button' in key_lower:
                         if isinstance(value, list):
-                            cta_options.extend(value[:3])  # Get up to 3 CTAs
+                            cta_options.extend(value[:3])
                         elif isinstance(value, str):
                             cta_options.append(value)
     
@@ -1764,27 +1743,21 @@ def display_content_results(results, platform_type):
     cta_options = list(dict.fromkeys(cta_options))[:3]
     
     if cta_options:
-        st.markdown(f"""
-        <div style="background: white; border-left: 4px solid #11998e; border-radius: 8px; padding: 1.2rem 1.5rem; margin: 0.5rem 0; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
-            <p style="color: #333; font-size: 0.85rem; font-weight: 600; margin: 0 0 1rem 0; text-transform: uppercase; letter-spacing: 0.5px;">
-                <span style="margin-right: 0.5rem;">🎯</span> Call-to-Action Options:
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+        cta_header = '''<div style="background: white; border-left: 4px solid #11998e; border-radius: 8px; padding: 1.2rem 1.5rem; margin: 0.5rem 0; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+            <p style="color: #333; font-size: 0.85rem; font-weight: 600; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">🎯 Call-to-Action Options:</p>
+        </div>'''
+        st.markdown(cta_header, unsafe_allow_html=True)
         
         for i, cta_item in enumerate(cta_options, 1):
             col_cta, col_copy = st.columns([10, 1])
             with col_cta:
-                st.markdown(f"""
-                <div style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 10px; padding: 0.8rem 1.2rem; margin: 0.4rem 0; display: inline-block; box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);">
-                    <span style="color: white; font-size: 1.05rem; font-weight: 600;">
-                        {i}. {cta_item} →
-                    </span>
-                </div>
-                """, unsafe_allow_html=True)
+                cta_html = f'''<div style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 10px; padding: 0.8rem 1.2rem; margin: 0.4rem 0; display: inline-block; box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);">
+                    <span style="color: white; font-size: 1.05rem; font-weight: 600;">{i}. {cta_item} →</span>
+                </div>'''
+                st.markdown(cta_html, unsafe_allow_html=True)
             with col_copy:
                 if st.button("📋", key=f"copy_cta_{i}", help=f"Copy CTA {i}"):
-                    st.toast(f"Copied: {cta_item}")
+                    st.toast(f"Copied!")
     
     # 4. HASHTAGS - Comma separated
     if hashtags:
